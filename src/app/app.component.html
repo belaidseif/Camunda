@@ -7,15 +7,50 @@
 <p>
   In fringilla suscipit odio quis tincidunt. Morbi felis elit, blandit a volutpat eget, rutrum ut mi. Duis ac orci at nibh semper vehicula. Quisque vulputate, nibh vitae laoreet convallis, urna erat imperdiet eros, et interdum arcu arcu ac risus. Maecenas in tellus nisi. Mauris quis lectus luctus, condimentum orci eu, rhoncus sapien. Aliquam at lobortis mauris, eget facilisis arcu. Quisque metus purus, rhoncus et tortor id, ornare maximus neque. Donec et ex tincidunt, malesuada lacus in, volutpat eros. Cras nisi arcu, dapibus quis odio sit amet, placerat blandit elit. Nullam at dictum mauris. Nulla feugiat elit ex, a pulvinar velit faucibus a. Nulla tincidunt velit purus, in faucibus ligula ornare venenatis.
 </p>
-<button class="button">Ouvrir</button>
-<div class="diagram-parent">
-  <app-diagram [url]="diagramUrl" (importDone)="handleImported($event)"></app-diagram>
 
-  <div class="import-error" *ngIf="importError">
-    <strong>Failed to render diagram: </strong>
-    {{ importError.message }}
+  <app-alert *ngIf="save" (close)="save = false"></app-alert>
+
+  <button class="button" (click)="onNewDiagram()">Nouveau</button>
+  <button class="button" (click)="onSaveDiagram()">Enregistrer</button>
+  <div class="">
+    <div class="row">
+      <div class="col-md-2" style="height: 400px">
+        <div
+          [ngClass]="idDeployment === deployment.id? 'deployment active' : 'deployment'"
+          *ngFor="let deployment of deployments"
+          (click)="onDeployment(deployment.id)"
+        >
+            <div class="deployment-name">{{deployment.name}}</div>
+            <div class="line-deployement"><strong>Date:</strong> <span>{{deployment.deploymentTime | date}}</span></div>
+            <div class="line-deployement"><strong>Source:</strong> <span>{{deployment.source}}</span></div>
+        </div>
+      </div>
+      <div class="col-md-10">
+        <div class="bpmn" >
+          <div
+            [ngClass]="idResource === resource.id? 'bpmn-item bpmn-active':'bpmn-item'"
+            *ngFor="let resource of resources"
+            (click)="onResource(resource.id)"
+          >
+            {{resource.name}}
+          </div>
+
+        </div>
+        <div class="diagram-parent">
+          <app-diagram [url]="diagramUrl" [saving]="saving" (importDone)="handleImported($event)"></app-diagram>
+
+          <div class="import-error" *ngIf="importError">
+            <strong>Failed to render diagram: </strong>
+            {{ importError.message }}
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
-</div>
+
+
+
 
 <p>
   Ut vestibulum, magna at molestie tempus, enim sem molestie est, vel tincidunt orci leo vel sapien. Vivamus convallis, purus in rhoncus ultricies, mauris sapien condimentum sapien, vel porta urna est eu leo. Nam dui erat, venenatis at metus ut, rutrum rutrum lacus. Fusce non eros vehicula, aliquet nibh vitae, bibendum dolor. Sed hendrerit lectus ex. Mauris id venenatis metus. In hac habitasse platea dictumst.
