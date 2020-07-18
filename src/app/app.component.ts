@@ -19,8 +19,8 @@ export class AppComponent implements OnInit{
   idDeployment:string = "";
   resources: Resource[] = [];
   idResource: string = "";
-  saving = false;
-
+  //saving = false;
+  message = null;
   save = false;
   constructor(
     private http:HttpClient,
@@ -39,6 +39,9 @@ export class AppComponent implements OnInit{
       this.idResource = resources[0].id;
     });
     this.deploymentService.setDeployments();
+    this.deploymentService.sendMessage.subscribe(message => {
+      this.message = message;
+    });
   }
 
   handleImported(event) {

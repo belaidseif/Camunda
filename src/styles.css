@@ -69,7 +69,16 @@
 	input
 \*----------------------------*/
 .input-form{
-  width: inherit;
-  border: 1px solid black;
-
+  width: 70%;
+  height: 30px;
+  border: none;
+  border-bottom: 1px solid #DADADA;
+  margin: 5px;
+  outline: none;
+  transition: 0.3s all;
+}
+.input-form[type=text]:focus{
+  border: none;
+  border-bottom: 1px solid dodgerblue;
+  box-shadow: 0px -4px 2px -3px dodgerblue inset, 0px 0px 0px 0px dodgerblue;
 }

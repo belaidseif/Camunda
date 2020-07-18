@@ -1,4 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {DeploymentService} from "../../Deployment.service";
+import {NgForm} from "@angular/forms";
 
 @Component({
   selector: 'app-alert',
@@ -8,11 +10,17 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 export class AlertComponent implements OnInit {
 
   @Output() close = new EventEmitter<void>();
-  constructor() { }
+  @Input() message: string;
+  constructor(private deploymentService: DeploymentService) { }
 
   ngOnInit(): void {
   }
   onClose() {
+    this.close.emit();
+  }
+
+  onSubmit(form: NgForm){
+    this.deploymentService.deploymentBehavior.next(form.value);
     this.close.emit();
   }
 }

@@ -21,6 +21,7 @@
     "@angular/router": "^9.1.11",
     "bootstrap": "^4.5.0",
     "bpmn-js": "^6.5.1",
+    "bpmn-js-properties-panel": "^0.34.0",
     "core-js": "^3.6.5",
     "moddle-xml": "^9.0.3",
     "rxjs": "~6.5.5",

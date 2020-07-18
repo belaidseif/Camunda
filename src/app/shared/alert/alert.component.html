@@ -1,11 +1,31 @@
 
 <div class="backdrop" (click)="onClose()"></div>
-<div class="alert-box" >
-  <form action="">
-    <input type="text" class="input-form"><br>
-    <input type="text" class="input-form">
+<div class="alert-box" *ngIf="!message">
+  <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+    <h4 style="margin-bottom: 20px">Ajouter un diagramme</h4>
+    <input
+      type="text"
+      placeholder="Nom de processes"
+      class="input-form"
+      ngModel
+      name="deployment"
+      required
+    ><br>
+    <input
+      type="text"
+      class="input-form"
+      placeholder="Nom de resource"
+      ngModel
+      name="resource"
+      required
+    >
     <div class="alert-box-actions">
-      <button class="btn btn-primary" (click)="onClose()">Close</button>
+      <button class="button" type="submit" [disabled]="!form.valid">Enregistrer</button>
     </div>
   </form>
+</div>
+<div class="alert-box" *ngIf="message">{{message}}
+  <div class="alert-box-actions">
+    <button class="button" (click)="onClose()">Fermer</button>
+  </div>
 </div>

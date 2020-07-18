@@ -1,13 +1,14 @@
 import {Injectable} from "@angular/core";
 import {Deployment} from "./Model/Deployment";
-import {Subject} from "rxjs";
+import {BehaviorSubject, Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable({providedIn:'root'})
 export class DeploymentService {
   private deployments: Deployment[] = [];
   public deploymentSubject = new Subject<Deployment[]>()
-
+  public deploymentBehavior = new BehaviorSubject<any>(null);
+  public sendMessage = new BehaviorSubject<string>(null);
   constructor(private http:HttpClient) {
   }
   getDeployments(){
@@ -26,9 +27,10 @@ export class DeploymentService {
 
   post(formData: FormData) {
     this.http.post('/engine-rest/deployment/create', formData).subscribe(res=>{
-      console.log(res);
+      this.sendMessage.next('Le diagramme est ajouté avec succés')
+      this.setDeployments();
     }, error => {
-      console.log(error);
+      this.sendMessage.next('erreur: ' + error.statusText)
     });
   }
 }

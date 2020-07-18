@@ -8,7 +8,7 @@ import {
   Output,
   ViewChild,
   SimpleChanges,
-  EventEmitter
+  EventEmitter, OnInit
 } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
@@ -25,13 +25,12 @@ import * as BpmnJS from 'bpmn-js/dist/bpmn-modeler.production.min.js';
 import { importDiagram } from './rx';
 
 import { throwError } from 'rxjs';
-import { FormGroup} from "@angular/forms";
 import {DeploymentService} from "../Deployment.service";
 
 @Component({
   selector: 'app-diagram',
   template: `
-    <div #ref class="diagram-container"></div>
+    <div #ref class="diagram-container" (click)="onClick()"></div>
   `,
   styles: [
     `
@@ -42,13 +41,13 @@ import {DeploymentService} from "../Deployment.service";
     `
   ]
 })
-export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy {
+export class DiagramComponent implements OnInit, AfterContentInit, OnChanges, OnDestroy {
   private bpmnJS: BpmnJS;
   @ViewChild('ref', { static: true }) private el: ElementRef;
   @Output() private importDone: EventEmitter<any> = new EventEmitter();
 
   @Input() private url: string;
-  @Input() private saving: boolean;
+  //@Input() private saving: boolean;
 
   constructor(private http: HttpClient, private deploymentService: DeploymentService) {
     this.bpmnJS = new BpmnJS();
@@ -57,6 +56,27 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy 
         this.bpmnJS.get('canvas').zoom('fit-viewport');
       }
     });
+  }
+  ngOnInit() {
+    this.deploymentService.deploymentBehavior.subscribe(formValue => {
+      if(formValue){
+        this.saveDiagram(formValue);
+      }
+    })
+  }
+
+  private saveDiagram(formValue: {deployment: string, resource: string }) {
+    let xml = "";
+    this.bpmnJS.saveXML({format: true}, (err, xmlUpdated) => xml = xmlUpdated);
+    let blob = new Blob([xml], {type: "text/plain"});
+    let file = new File([blob], formValue.resource + '.bpmn');
+    //to send multipart form data to the server
+    let formData = new FormData();
+    formData.append('data', file);
+    formData.append('deployment-name', formValue.deployment);
+    formData.append('enable-duplicate-filtering', 'true');
+    formData.append('deployment-source', 'process application');
+    this.deploymentService.post(formData);
   }
 
   ngAfterContentInit(): void {
@@ -68,24 +88,10 @@ export class DiagramComponent implements AfterContentInit, OnChanges, OnDestroy 
     if (changes.url) {
       this.loadUrl(changes.url.currentValue);
     }
-    if(changes.saving){
-      let xml = "";
-      this.bpmnJS.saveXML({format: true}, (err, xmlUpdated) => xml = xmlUpdated);
-      let blob = new Blob([xml], {type: "text/plain"});
-      let file = new File([blob], 'finished.bpmn');
-      //to send multipart form data to the server
-      let formData = new FormData();
-      formData.append('data', file);
-      formData.append('deployment-name', 'secondeName');
-      formData.append('enable-duplicate-filtering', 'true');
-      formData.append('deployment-source', 'process application');
-      this.deploymentService.post(formData);
-
-
-    }
+  }
+  onClick(){
 
   }
-
   ngOnDestroy(): void {
     this.bpmnJS.destroy();
   }
